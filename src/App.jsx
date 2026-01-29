@@ -18,20 +18,7 @@ function App() {
   return (
     <div className="app">
       <div className="content">
-        <img src="/logo.png" alt="Kentucky Derby" className="header-logo" />
-        <h1>Kentucky Derby AI Assistant</h1>
-        <p>Your intelligent companion for all things Kentucky Derby. Click the chat button to start a conversation.</p>
-
-        <div className="instructions">
-          <h2>Chat with Our AI Assistant</h2>
-          <p>Get instant answers about the Kentucky Derby, race history, betting information, and more.</p>
-          <ul>
-            <li>Ask questions about race history and statistics</li>
-            <li>Get information about horses and jockeys</li>
-            <li>Learn about betting and wagering</li>
-            <li>Explore Kentucky Derby traditions</li>
-          </ul>
-        </div>
+        <h1>Kentucky Derby AI Assistant Prototype</h1>
       </div>
 
       {!isWebchatOpen && (

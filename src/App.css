@@ -1,14 +1,14 @@
 .content {
-  max-width: 800px;
-  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
 
 h1 {
+  font-size: 3rem;
+  text-align: center;
   color: #B8956A;
-}
-
-.instructions h2 {
-  color: #DC143C;
 }
 
 .webchat-sidebar {
@@ -28,10 +28,23 @@ h1 {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: #B8956A;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #B8956A 0%, #D4AF7A 100%);
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(184, 149, 106, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
   z-index: 999;
+}
+
+.chat-open-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(184, 149, 106, 0.5);
 }
 
 .chat-open-button svg {
@@ -42,10 +55,24 @@ h1 {
   position: absolute;
   left: -50px;
   top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   background: #DC143C;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
   z-index: 1001;
+}
+
+.chat-close-button:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(220, 20, 60, 0.4);
 }
 
 .chat-close-button svg {
