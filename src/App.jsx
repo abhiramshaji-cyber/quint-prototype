@@ -9,21 +9,6 @@ function App() {
     setIsWebchatOpen((prevState) => !prevState)
   }
 
-  const handleResetConversation = () => {
-    // Clear Botpress data from localStorage
-    const keysToRemove = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key && (key.includes('botpress') || key.includes('bp-') || key.includes('webchat'))) {
-        keysToRemove.push(key)
-      }
-    }
-    keysToRemove.forEach(key => localStorage.removeItem(key))
-
-    // Reload the page to restart conversation
-    window.location.reload()
-  }
-
   const webchatConfig = {
     botName: ' ',
     botAvatar: '/logo.png',
@@ -35,9 +20,6 @@ function App() {
       <div className="content">
         <h1>Kentucky Derby AI Assistant Prototype</h1>
         <p>Click the icon in the bottom right corner to start testing</p>
-        <button className="reset-button" onClick={handleResetConversation}>
-          Start New Conversation
-        </button>
       </div>
 
       {!isWebchatOpen && (
