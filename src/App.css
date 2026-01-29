@@ -1,5 +1,6 @@
 .content {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
@@ -9,6 +10,13 @@ h1 {
   font-size: 3rem;
   text-align: center;
   color: #B8956A;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1rem;
+  text-align: center;
+  color: #666;
 }
 
 .webchat-sidebar {
@@ -47,8 +55,10 @@ h1 {
   box-shadow: 0 6px 16px rgba(184, 149, 106, 0.5);
 }
 
-.chat-open-button svg {
-  color: white;
+.chat-open-button img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .chat-close-button {
