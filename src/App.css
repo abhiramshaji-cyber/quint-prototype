@@ -1,0 +1,53 @@
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #B8956A;
+}
+
+.instructions h2 {
+  color: #DC143C;
+}
+
+.webchat-sidebar {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.webchat-sidebar.open {
+  right: 0;
+}
+
+.chat-open-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #B8956A;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+}
+
+.chat-open-button svg {
+  color: white;
+}
+
+.chat-close-button {
+  position: absolute;
+  left: -50px;
+  top: 50%;
+  background: #DC143C;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.chat-close-button svg {
+  color: white;
+}
