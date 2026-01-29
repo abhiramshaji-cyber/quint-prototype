@@ -6,17 +6,33 @@
   min-height: 100vh;
 }
 
-h1 {
+.content h1 {
   font-size: 3rem;
   text-align: center;
   color: #B8956A;
   margin-bottom: 1rem;
 }
 
-p {
+.content p {
   font-size: 1rem;
   text-align: center;
   color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.reset-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  background: #B8956A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-button:hover {
+  background: #A37F54;
 }
 
 .webchat-sidebar {
