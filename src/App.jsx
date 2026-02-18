@@ -38,7 +38,7 @@ function App() {
           </button>
         )}
         <Webchat
-          clientId="2c39ac3c-2e52-4d11-aca6-71e0139a658c"
+          clientId="66b5d565-7e92-4be6-97b5-b238a9923e57"
           configuration={webchatConfig}
         />
       </div>
