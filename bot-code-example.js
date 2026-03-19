@@ -1,12 +1,15 @@
 // ============================================================
 // Botpress Bot Code — JWT Authentication Example
 // ============================================================
+// Abhiram will set up the Botpress side — this file is a
+// reference for the full logic.
+//
 // Place this code in a Botpress Execute Code Card at the
 // START of your bot flow (e.g. right after the trigger node).
 //
-// It reads the JWT token + email sent from the webchat,
-// verifies the token, and stores the authenticated user info
-// in workflow variables for use throughout the conversation.
+// The webchat sends email + jwtToken via updateUser().
+// The bot reads it from event.state.user.data, decodes the
+// JWT, validates it, and stores results in workflow variables.
 // ============================================================
 
 // ------ Step 1: Read user data sent from webchat ------
