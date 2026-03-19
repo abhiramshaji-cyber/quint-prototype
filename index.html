@@ -1,13 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quint Prototype - Botpress Webchat</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derby Experience Concierge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .title {
+            text-align: center;
+            color: #d4af37;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .title span {
+            display: block;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">
+        Derby Experience Concierge
+        <span>Your Personal Guide</span>
+    </h1>
+
+    <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2025/11/12/21/20251112215246-NRTUFI5J.js" defer></script>
+
+    <script>
+      // --- Prototype: Simulated JWT and user data ---
+      // In production, this JWT would come from your auth server after user login.
+      const SIMULATED_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
+        'eyJzdWIiOiJ1c2VyXzEyMyIsImVtYWlsIjoiZ3Vlc3RAZGVyYnkuY29tIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE4MDAwMDAwMDB9.' +
+        'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+      const USER_EMAIL = 'asadashiva@quint.co';
+
+      // Wait for webchat to initialize, then send user data + JWT
+      window.botpress.on('webchat:initialized', () => {
+        console.log('Webchat initialized — sending user data and JWT');
+
+        window.botpress.updateUser({
+          data: {
+            email: USER_EMAIL,
+            jwtToken: SIMULATED_JWT,
+          },
+        });
+      });
+    </script>
+</body>
 </html>
