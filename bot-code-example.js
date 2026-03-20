@@ -1,120 +1,138 @@
-// ============================================================
-// Botpress Bot Code — JWT Authentication Example
-// ============================================================
-// Abhiram will set up the Botpress side — this file is a
-// reference for the full logic.
-//
-// Place this code in a Botpress Execute Code Card at the
-// START of your bot flow (e.g. right after the trigger node).
-//
-// The webchat sends email + jwtToken via updateUser().
-// The bot reads it from event.state.user.data, decodes the
-// JWT, validates it, and stores results in workflow variables.
-// ============================================================
+try {
+  console.log('[JWT DEBUG] Incoming event:', JSON.stringify(event, null, 2))
+  console.log('[JWT DEBUG] workflow.userData:', JSON.stringify(workflow.userData, null, 2))
 
-// ------ Step 1: Read user data sent from webchat ------
+  const jwt = workflow.userData?.userData?.jwt
 
-const getUserData = async () => {
-  const userData = event.state.user.data
-  // userData contains: { email, jwtToken, websiteUrl }
+  console.log('[JWT DEBUG] Extracted JWT:', jwt)
 
-  if (!userData || !userData.jwtToken) {
-    workflow.isAuthenticated = false
-    workflow.authError = 'No JWT token provided'
+  if (!jwt) {
+    console.log('[JWT DEBUG] No JWT found -> failing early')
+    workflow.verified = false
+    workflow.userEmail = ''
     return
   }
 
-  const jwtToken = userData.jwtToken
-  const email = userData.email
-  const websiteUrl = userData.websiteUrl
+  const parts = jwt.split('.')
+  console.log('[JWT DEBUG] JWT parts:', parts)
 
-  // Store the originating site URL in conversation variables
+  if (parts.length !== 3) {
+    console.log('[JWT DEBUG] Invalid JWT format (expected 3 parts)')
+    workflow.verified = false
+    workflow.userEmail = ''
+    return
+  }
+
+  const [headerB64, payloadB64, signatureB64] = parts
+  console.log('[JWT DEBUG] headerB64:', headerB64)
+  console.log('[JWT DEBUG] payloadB64:', payloadB64)
+  console.log('[JWT DEBUG] signatureB64:', signatureB64)
+
+  const secret = env.BOTPRESS_JWT_SECRET
+  console.log('[JWT DEBUG] Secret exists:', !!secret)
+  console.log('[JWT DEBUG] Secret length:', secret?.length)
+
+  if (!secret) {
+    console.log('[JWT DEBUG] Missing BOTPRESS_JWT_SECRET')
+    workflow.verified = false
+    workflow.userEmail = ''
+    return
+  }
+
+  const encoder = new TextEncoder()
+
+  const base64UrlToUint8Array = (str) => {
+    const base64 = str.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4)
+    const binary = atob(padded)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i)
+    }
+    return bytes
+  }
+
+  const uint8ArrayToBase64Url = (bytes) => {
+    let binary = ''
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i])
+    }
+    return btoa(binary)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '')
+  }
+
+  const signingInput = `${headerB64}.${payloadB64}`
+  console.log('[JWT DEBUG] Signing input:', signingInput)
+
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  )
+  console.log('[JWT DEBUG] Crypto key imported')
+
+  const signatureBuffer = await crypto.subtle.sign(
+    'HMAC',
+    cryptoKey,
+    encoder.encode(signingInput)
+  )
+
+  const expectedSig = uint8ArrayToBase64Url(
+    new Uint8Array(signatureBuffer)
+  )
+  console.log('[JWT DEBUG] Expected signature:', expectedSig)
+
+  const signaturesMatch = expectedSig === signatureB64
+  console.log('[JWT DEBUG] Signatures match:', signaturesMatch)
+
+  if (!signaturesMatch) {
+    console.log('[JWT DEBUG] Signature verification failed')
+    workflow.verified = false
+    workflow.userEmail = ''
+    return
+  }
+
+  const payloadJson = new TextDecoder().decode(
+    base64UrlToUint8Array(payloadB64)
+  )
+  console.log('[JWT DEBUG] Decoded payload JSON:', payloadJson)
+
+  const payload = JSON.parse(payloadJson)
+  console.log('[JWT DEBUG] Parsed payload:', JSON.stringify(payload, null, 2))
+
+  const now = Math.floor(Date.now() / 1000)
+  console.log('[JWT DEBUG] Current timestamp:', now)
+  console.log('[JWT DEBUG] Payload exp:', payload.exp)
+
+  if (payload.exp && payload.exp < now) {
+    console.log('[JWT DEBUG] Token expired')
+    workflow.verified = false
+    workflow.userEmail = ''
+    return
+  }
+
+  workflow.verified = true
+  workflow.userEmail = payload.email || ''
+
+  const websiteUrl = workflow.userData?.userData?.websiteUrl
   if (websiteUrl) {
     conversation.originatingSite = websiteUrl
+    console.log('[JWT DEBUG] originatingSite set to:', websiteUrl)
   }
 
-  // ------ Step 2: Decode and verify the JWT ------
-  // In Botpress Execute Code Cards, you can use the built-in
-  // `axios` for HTTP calls. For a real prototype, we decode
-  // the JWT payload (base64) and verify claims.
+  console.log('[JWT DEBUG] Token valid')
+  console.log('[JWT DEBUG] userEmail set to:', workflow.userEmail)
 
-  try {
-    // Decode JWT payload (middle segment)
-    const parts = jwtToken.split('.')
-    if (parts.length !== 3) {
-      throw new Error('Invalid JWT format')
-    }
-
-    // Base64url decode the payload
-    const payload = JSON.parse(
-      Buffer.from(parts[1].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString()
-    )
-
-    // ------ Step 3: Validate claims ------
-
-    // Check expiration
-    const now = Math.floor(Date.now() / 1000)
-    if (payload.exp && payload.exp < now) {
-      throw new Error('JWT token has expired')
-    }
-
-    // Check that email in JWT matches email from webchat
-    if (payload.email && payload.email !== email) {
-      throw new Error('Email mismatch between JWT and user data')
-    }
-
-    // ------ Step 4: Store authenticated user info ------
-
-    workflow.isAuthenticated = true
-    workflow.userEmail = payload.email || email
-    workflow.userId = payload.sub
-    workflow.authError = ''
-
-    console.log(`Authenticated user: ${workflow.userEmail}`)
-
-  } catch (err) {
-    workflow.isAuthenticated = false
-    workflow.authError = err.message
-    console.error('JWT verification failed:', err.message)
-  }
+} catch (err) {
+  console.log('[JWT DEBUG] Caught error:', err?.message || err)
+  console.log(
+    '[JWT DEBUG] Full error object:',
+    JSON.stringify(err, Object.getOwnPropertyNames(err || {}), 2)
+  )
+  workflow.verified = false
+  workflow.userEmail = ''
 }
-
-await getUserData()
-
-
-// ============================================================
-// PRODUCTION NOTES:
-// ============================================================
-//
-// 1. SERVER-SIDE VERIFICATION (Recommended for production)
-//    Instead of decoding the JWT client-side in the bot, call
-//    your backend API to verify the token signature:
-//
-//    const response = await axios.post('https://your-api.com/verify-token', {
-//      token: jwtToken
-//    })
-//    const { valid, user } = response.data
-//
-// 2. WORKFLOW VARIABLES TO CREATE IN BOTPRESS STUDIO:
-//    - isAuthenticated  (boolean)
-//    - userEmail        (string)
-//    - userId           (string)
-//    - authError        (string)
-//
-// 3. USING IN CONVERSATION:
-//    After this code runs, use Expression Cards to branch:
-//
-//    IF workflow.isAuthenticated === true
-//      → "Welcome back, {{workflow.userEmail}}!"
-//    ELSE
-//      → "Please log in to continue."
-//
-// 4. JWT STRUCTURE (the simulated token decodes to):
-//    {
-//      "sub": "user_123",
-//      "email": "guest@derby.com",
-//      "name": "Jane Doe",
-//      "iat": 1700000000,
-//      "exp": 1800000000
-//    }
-// ============================================================

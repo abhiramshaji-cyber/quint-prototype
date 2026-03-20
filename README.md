@@ -3,25 +3,29 @@
 ## How It Works
 
 1. `index.html` loads the Botpress webchat widget
-2. On `webchat:initialized`, the page sends `email`, `jwtToken`, and `websiteUrl` to the bot via `window.botpress.updateUser()`
-3. The bot receives this data at `event.state.user.data`
-4. Bot decodes the JWT, validates expiration + email match, stores `isAuthenticated` and `userEmail` in workflow variables, and saves the originating site URL to `conversation.originatingSite`
-5. Bot branches conversation based on auth status
+2. On `webchat:initialized`, the page sends `jwtToken` and `websiteUrl` to the bot via `window.botpress.updateUser()`
+3. The bot's Execute Code Card reads the JWT from `event.payload.userData.jwt`, verifies the HMAC-SHA256 signature against `BOTPRESS_JWT_SECRET`, and checks expiration
+4. On success, sets `workflow.verified = true` and `workflow.userEmail` from the JWT payload
+5. Stores the originating site URL in `conversation.originatingSite`
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Landing page — sends email, JWT & website URL to the bot on webchat init |
-| `bot-code-example.js` | Full bot-side logic — JWT decode, validation, workflow & conversation variable storage |
+| `index.html` | Landing page — sends JWT & website URL to the bot on webchat init |
+| `bot-code-example.js` | Botpress Execute Code Card logic — JWT signature verification, workflow & conversation variable storage |
 
-## Botpress Side
+## Botpress Studio Setup
 
-Abhiram will set up the Botpress Studio flow (Execute Code Card, workflow variables, branching). The `bot-code-example.js` file has the full reference logic and production notes.
+### Workflow Variables
+- `verified` (boolean)
+- `userEmail` (string)
 
-The data arrives at:
+### Conversation Variables
+- `originatingSite` (string)
 
-```js
-const userData = event.state.user.data
-// { email: '...', jwtToken: '...', websiteUrl: '...' }
-```
+### Execute Code Card
+The code in `bot-code-example.js` goes into an Execute Code Card at the start of your bot flow. It uses the Web Crypto API (`crypto.subtle`) to verify the JWT signature server-side.
+
+### Environment Variable
+- `BOTPRESS_JWT_SECRET` — the shared secret used to sign and verify JWTs

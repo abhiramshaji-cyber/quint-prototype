@@ -50,22 +50,14 @@
     <script src="https://files.bpcontent.cloud/2025/11/12/21/20251112215246-NRTUFI5J.js" defer></script>
 
     <script>
-      // --- Prototype: Simulated JWT and user data ---
-      // In production, this JWT would come from your auth server after user login.
-      const SIMULATED_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-        'eyJzdWIiOiJ1c2VyXzEyMyIsImVtYWlsIjoiZ3Vlc3RAZGVyYnkuY29tIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE4MDAwMDAwMDB9.' +
-        'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+      const JWT = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZGZhc2Rmb2V3aUB2bW9kbS5jb20iLCJleHAiOjE3NzQwMjYxMTB9.Il0w7IXYQ5rLVoYoU8D83oz7RXI4qqZLVvwqXv5HKRA';
 
-      const USER_EMAIL = 'asadashiva@quint.co';
-
-      // Wait for webchat to initialize, then send user data + JWT
       window.botpress.on('webchat:initialized', () => {
-        console.log('Webchat initialized — sending user data and JWT');
+        console.log('Webchat initialized — sending user data');
 
         window.botpress.updateUser({
           data: {
-            email: USER_EMAIL,
-            jwtToken: SIMULATED_JWT,
+            jwt: JWT,
             websiteUrl: window.location.href,
           },
         });
