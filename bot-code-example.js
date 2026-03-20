@@ -16,7 +16,7 @@
 
 const getUserData = async () => {
   const userData = event.state.user.data
-  // userData contains: { email, jwtToken }
+  // userData contains: { email, jwtToken, websiteUrl }
 
   if (!userData || !userData.jwtToken) {
     workflow.isAuthenticated = false
@@ -26,6 +26,12 @@ const getUserData = async () => {
 
   const jwtToken = userData.jwtToken
   const email = userData.email
+  const websiteUrl = userData.websiteUrl
+
+  // Store the originating site URL in conversation variables
+  if (websiteUrl) {
+    conversation.originatingSite = websiteUrl
+  }
 
   // ------ Step 2: Decode and verify the JWT ------
   // In Botpress Execute Code Cards, you can use the built-in
