@@ -38,13 +38,37 @@
             text-transform: uppercase;
             margin-top: 0.5rem;
         }
+
+        .restart-btn {
+            display: block;
+            margin: 2rem auto 0;
+            padding: 0.75rem 2rem;
+            background: #d4af37;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .restart-btn:hover {
+            background: #c49b2f;
+        }
+
     </style>
 </head>
 <body>
-    <h1 class="title">
-        Derby Experience Concierge
-        <span>Your Personal Guide</span>
-    </h1>
+    <div>
+        <h1 class="title">
+            Derby Experience Concierge
+            <span>Your Personal Guide</span>
+        </h1>
+        <button class="restart-btn" onclick="window.botpress.restartConversation()">Restart Conversation</button>
+    </div>
 
     <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
     <script src="https://files.bpcontent.cloud/2025/11/12/21/20251112215246-NRTUFI5J.js" defer></script>
