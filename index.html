@@ -29,6 +29,11 @@
     <script src="https://files.bpcontent.cloud/2025/11/12/21/20251112215246-NRTUFI5J.js" defer></script>
 
     <script>
+      // Mimic turbo:load — fires on DOMContentLoaded, same as Turbo would on first page load
+      document.addEventListener('DOMContentLoaded', () => {
+        document.dispatchEvent(new Event('turbo:load'))
+      })
+
       let botpressReady = false
 
       function sendUpdate() {
