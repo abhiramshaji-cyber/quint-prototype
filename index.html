@@ -29,22 +29,30 @@
     <script src="https://files.bpcontent.cloud/2025/11/12/21/20251112215246-NRTUFI5J.js" defer></script>
 
     <script>
-      // On webchat ready: send only websiteUrl (no JWT yet)
+      let botpressReady = false
+
+      function sendUpdate() {
+        const data = { websiteUrl: window.location.href }
+        if (window.userJWT) data.jwt = window.userJWT
+        window.botpress.updateUser({ data })
+        console.log('[Botpress] updateUser called with', data)
+      }
+
       window.botpress.on('webchat:initialized', () => {
-        const data = { websiteUrl: window.location.href };
-        window.botpress.updateUser({ data });
-        console.log('[Botpress] updateUser (pre-login) called with', data);
-      });
+        botpressReady = true
+        sendUpdate()
+      })
+
+      document.addEventListener('turbo:load', () => {
+        if (botpressReady) sendUpdate()
+      })
 
       function handleLogin() {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
 
         window.userJWT = 'eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFzZGZhc2Rmb2V3aUB2bW9kbS5jb20iLCJleHAiOjE3NzQwMjYxMTB9.Il0w7IXYQ5rLVoYoU8D83oz7RXI4qqZLVvwqXv5HKRA';
-
-        const data = { websiteUrl: window.location.href, jwt: window.userJWT };
-        window.botpress.updateUser({ data });
-        console.log('[Botpress] updateUser (post-login) called with', data);
+        sendUpdate()
       }
     </script>
 </body>
